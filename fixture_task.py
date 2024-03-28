@@ -16,14 +16,14 @@ def add_numbers(a, b):
     return a + b
 
 
-def test_add_two_positive_numbers(track_test_time):
+def test_add_two_positive_numbers():
     a, b = 3, 5
     result = add_numbers(a, b)
     time.sleep(2)
     assert result == 8
 
 
-def test_add_two_negative_numbers(track_test_time):
+def test_add_two_negative_numbers():
     a, b = -3, -5
     result = add_numbers(a, b)
     time.sleep(3)
