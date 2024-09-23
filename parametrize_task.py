@@ -1,3 +1,5 @@
+from distutils.command.config import config
+
 import pytest
 import yaml
 
@@ -7,7 +9,6 @@ def get_numbers_data(config_name):
         config = yaml.safe_load(stream)
     return config['cases']
 
-
 def add_numbers(a, b, c):
     try:
         return a + b + c
@@ -15,10 +16,24 @@ def add_numbers(a, b, c):
         raise 'Please check the parameters. All of them must be numeric'
 
 
-def test_add_numbers():
-    pass
+@pytest.mark.smoke
+@pytest.mark.parametrize(
+    "input_data, expected",
+    [(data["input"], data["expected"]) for data in get_numbers_data("config.yaml")],
+    ids=[data["case_name"] for data in get_numbers_data("config.yaml")]
+)
+def test_add_numbers(input_data, expected):
+    result = add_numbers(*input_data)
+    assert result == expected, f"Expected {expected} but got {result}"
 
 
-def test_add_floats():
+@pytest.mark.critical
+@pytest.mark.parametrize(
+    "num1, num2, num3",
+    [("2", 3, 5), (1, 5, None), ([], 2, 3)],
+    ids=["StringType", "NoneType", "ListType"]
+)
+def test_add_floats(num1, num2, num3):
     a, b, c = 'a', 2, 1
-    pass
+    with pytest.raises(TypeError):
+        add_numbers(a, b, c)

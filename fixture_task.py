@@ -2,14 +2,23 @@ import time
 import pytest
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session", autouse=True)
 def track_suite_time():
-    pass
+    start_time = time.time()
+    yield # Run some test
+    end_tine = time.time()
+    total_time = end_tine - start_time
+    print(f"Total suite execution time: {total_time:.4f} seconds")
 
 
-@pytest.fixture()
-def track_test_time():
-    pass
+@pytest.fixture(autouse=True)
+def track_test_time(request):
+    if request.node.name != "test_last":
+        start_time = time.time()
+        yield  # Run some test
+        end_time = time.time()
+        total_time = end_time - start_time
+        print(f"\nTest {request.node.name} execution time: {total_time:.4f} seconds")
 
 
 def add_numbers(a, b):
